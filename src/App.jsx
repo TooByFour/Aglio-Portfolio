@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef, useState, Suspense } from "react";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import './App.css';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import './styles.css';
 
 function Box(props) {
   const ref = useRef();
@@ -25,17 +26,26 @@ function Box(props) {
   )
 }
 
+const Model = () => {
+  const gltf = useLoader(GLTFLoader, './assets/low-poly_door/scene.gltf')
+  return (
+    <>
+      <primitive object={gltf.scene} />
+    </>
+  );
+};
+
 export default function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
       <Canvas>
-        <ambientLight intensity={Math.PI/2} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-        <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Box position={[-1.2, 0, 0]} />
-        <Box position={[1.2, 0, 0]} />
+        <ambientLight intensity={Math.PI} />
+        <directionalLight args={[0xffffff, 0.5]} />
+        <Suspense fallback={null}>
+          <Model />
+        </Suspense>
         <OrbitControls />
       </Canvas>
     </>
